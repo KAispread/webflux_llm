@@ -1,4 +1,4 @@
-package com.kaillm.webflux_llm
+package com.kaillm.webflux_llm.chapter1
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
