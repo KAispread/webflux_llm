@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import reactor.core.scheduler.Schedulers.boundedElastic
 import java.time.Duration
 
 @Slf4j
@@ -15,14 +17,16 @@ import java.time.Duration
 @RestController
 class ReactiveProgrammingExampleController {
 
-    @GetMapping("/onenine/list")
-    fun produceOneToNine(): List<Int> {
-        val sink = arrayListOf<Int>()
-        for (i in 1..9) {
-            Thread.sleep(500L)
-            sink.add(i)
-        } // 4.5 초 소요
-        return sink
+    @GetMapping("/onenine/legacy")
+    fun produceOneToNine(): Mono<MutableList<Int>> {
+        return Mono.fromCallable {
+            val sink = mutableListOf<Int>()
+            for (i in 1..9) {
+                Thread.sleep(500L)
+                sink.add(i)
+            } // 4.5 초 소요
+            sink
+        }.subscribeOn(boundedElastic())
     }
 
     @GetMapping("/onenine/flux")
@@ -55,7 +59,7 @@ class ReactiveProgrammingExampleController {
                 sink.next(i)
             }
             sink.complete()
-        }.subscribeOn(Schedulers.boundedElastic())
+        }.subscribeOn(boundedElastic())
     }
 
     @GetMapping("/onenine/flux/v3")
