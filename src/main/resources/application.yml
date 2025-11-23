@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: webflux_llm
+
+logging:
+  level:
+    root: info
+
+llm:
+  gpt:
+    key: ${OPEN-API-KEY}
